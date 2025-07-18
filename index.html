@@ -110,6 +110,7 @@
             align-items: center;
             justify-content: center;
             gap: 15px;
+            position: relative;
         }
 
         .header h1 a {
@@ -136,6 +137,9 @@
             color: var(--text-color);
             font-weight: 500;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 30px;
+            right: 30px;
         }
 
         [data-theme="dark"] .theme-toggle {
@@ -181,7 +185,7 @@
         }
 
         .header p {
-            font-size: 1em;
+            font-size: 1.1em;
             opacity: 0.8;
         }
 
@@ -468,9 +472,23 @@
 
             @media (max-width: 768px) {
             .header h1 {
-                font-size: 1.4em;
-                flex-direction: column;
+                font-size: 1.6em;
+                flex-direction: row;
                 gap: 10px;
+                justify-content: flex-start;
+                margin-left: 0;
+            }
+            
+            .theme-toggle {
+                position: static;
+                margin-left: auto;
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+
+            .theme-toggle svg {
+                width: 16px;
+                height: 16px;
             }
             
             .content {
@@ -488,16 +506,6 @@
             
             .stats {
                 grid-template-columns: repeat(2, 1fr);
-            }
-
-            .theme-toggle {
-                padding: 6px 8px;
-                font-size: 12px;
-            }
-
-            .theme-toggle svg {
-                width: 16px;
-                height: 16px;
             }
         }
     </style>

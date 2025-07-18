@@ -521,7 +521,7 @@
 
         @media (max-width: 768px) {
             .header h1 {
-                font-size: 1.4em;
+                font-size: 1.6em;
                 flex-direction: row;
                 gap: 10px;
                 justify-content: flex-start;
@@ -908,13 +908,32 @@
 
         // 鍵盤快捷鍵支援
         document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.key === 'Enter') {
+            // 檢測作業系統 (Mac 或 Windows/Linux)
+            const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+            const cmdKey = isMac ? e.metaKey : e.ctrlKey;
+            
+            // 轉換功能 (Ctrl/Cmd + Enter)
+            if (cmdKey && e.key === 'Enter') {
                 e.preventDefault();
                 runConvert();
             }
             
-            if (e.ctrlKey && e.key === 'c' && document.activeElement.id === 'inputText') {
+            // 複製功能 (Ctrl/Cmd + C，當焦點在輸入框時)
+            if (cmdKey && e.key === 'c' && document.activeElement.id === 'inputText') {
+                e.preventDefault();
                 copyResult();
+            }
+            
+            // 套用建議模式 (Ctrl + Shift + T，Mac 和 Windows 都用 Ctrl)
+            if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+                e.preventDefault();
+                applyRecommended();
+            }
+            
+            // 清除功能 (Ctrl + Shift + X，Mac 和 Windows 都用 Ctrl)
+            if (e.ctrlKey && e.shiftKey && e.key === 'X') {
+                e.preventDefault();
+                clearAll();
             }
         });
 

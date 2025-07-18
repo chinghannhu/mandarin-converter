@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中文全形半形轉換工具 | Mandarin Full Half Width Converter</title>
+    <meta name="description" content="免費的中文全形半形轉換工具，支援標點符號、英文字母、數字轉換，遵循中文文案排版指北規範">
+    <meta name="keywords" content="中文轉換,全形半形,標點符號,文案排版,Mandarin converter,Traditional Chinese">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #5abdf7 0%, #4facfe 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #5abdf7 0%, #4facfe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .text-input {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #5abdf7;
+            box-shadow: 0 0 0 3px rgba(90, 189, 247, 0.1);
+        }
+
+        .mode-section {
+            margin-bottom: 30px;
+        }
+
+        .mode-section h3 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.2em;
+        }
+
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .mode-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .mode-item:hover {
+            border-color: #5abdf7;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(90, 189, 247, 0.2);
+        }
+
+        .mode-item.active {
+            border-color: #5abdf7;
+            background: linear-gradient(135deg, #5abdf7 0%, #4facfe 100%);
+            color: white;
+        }
+
+        .mode-item input[type="checkbox"] {
+            display: none;
+        }
+
+        .mode-item label {
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .mode-item label::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .mode-item.active label::before {
+            background: white;
+            border-color: white;
+            content: '✓';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #5abdf7;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: none;
+            color: white;
+            min-width: 120px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-convert {
+            background: linear-gradient(135deg, #5abdf7 0%, #4facfe 100%);
+            font-size: 16px;
+            padding: 15px 30px;
+        }
+
+        .btn-copy {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .btn-copy.copied {
+            background: linear-gradient(135deg, #5abdf7 0%, #4facfe 100%);
+        }
+
+        .btn-recommended {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .btn-clear {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .output-section {
+            margin-bottom: 20px;
+        }
+
+        .output-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .text-output {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            background-color: #f8f9fa;
+            font-family: inherit;
+        }
+
+        .stats {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            text-align: center;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #5abdf7;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: #5abdf7;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .heart {
+            color: #e74c3c;
+            font-size: 16px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 20px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .mode-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>中文全形半形轉換工具</h1>
+            <p>Mandarin Full Half Width Converter - 快速轉換中文文字的全形半形格式</p>
+        </div>
+
+        <div class="content">
+            <div class="input-section">
+                <label for="inputText">輸入文字</label>
+                <textarea 
+                    id="inputText" 
+                    class="text-input" 
+                    placeholder="在此輸入您要轉換的中文文字..."
+                ></textarea>
+            </div>
+
+            <div class="mode-section">
+                <h3>選擇轉換模式（可複選）</h3>
+                <div class="mode-grid">
+                    <div class="mode-item" onclick="toggleMode(this, 3)">
+                        <input type="checkbox" id="mode3" value="3">
+                        <label for="mode3">標點符號轉成全形</label>
+                    </div>
+                    <div class="mode-item" onclick="toggleMode(this, 10)">
+                        <input type="checkbox" id="mode10" value="10">
+                        <label for="mode10">中文與英文數字之間加空白</label>
+                    </div>
+                    <div class="mode-item" onclick="toggleMode(this, 1)">
+                        <input type="checkbox" id="mode1" value="1">
+                        <label for="mode1">全文轉成全形</label>
+                    </div>
+                    <div class="mode-item" onclick="toggleMode(this, 2)">
+                        <input type="checkbox" id="mode2" value="2">
+                        <label for="mode2">全文轉成半形</label>
+                    </div>
+                    <div class="mode-item" onclick="toggleMode(this, 5)">
+                        <input type="checkbox" id="mode5" value="5">
+                        <label for="mode5">英文轉成全形</label>
+                    </div>
+                    <div class="mode-item" onclick="toggleMode(this, 6)">
+                        <input type="checkbox" id="mode6" value="6">
+                        <label for="mode6">英文轉成半形</label>
+                    </div>
+                    <div class="mode-item" onclick="toggleMode(this, 4)">
+                        <input type="checkbox" id="mode4" value="4">
+                        <label for="mode4">標點符號轉成半形</label>
+                    </div>
+                    <div class="mode-item" onclick="toggleMode(this, 11)">
+                        <input type="checkbox" id="mode11" value="11">
+                        <label for="mode11">去掉斷行和多餘空白</label>
+                    </div>
+                    <div class="mode-item" onclick="toggleMode(this, 9)">
+                        <input type="checkbox" id="mode9" value="9">
+                        <label for="mode9">去掉中文字與標點符號間空白</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-convert" onclick="runConvert()">
+                    轉換
+                </button>
+                <button class="btn btn-recommended" onclick="applyRecommended()">
+                    套用建議模式
+                </button>
+            </div>
+
+            <div class="output-section">
+                <label for="outputText">轉換結果</label>
+                <textarea 
+                    id="outputText" 
+                    class="text-output" 
+                    readonly
+                    placeholder="轉換結果將顯示在此處..."
+                ></textarea>
+                <div style="display: flex; gap: 15px; margin-top: 15px; justify-content: center;">
+                    <button class="btn btn-copy" onclick="copyResult()">
+                        複製結果
+                    </button>
+                    <button class="btn btn-clear" onclick="clearAll()">
+                        清除
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>建議模式參考 <a href="https://github.com/sparanoid/chinese-copywriting-guidelines" target="_blank">《中文文案排版指北》</a></p>
+            <p style="margin-top: 10px;">Made in Taiwan with <span class="heart">❤️</span></p>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * 切換模式選擇
+         */
+        function toggleMode(element, mode) {
+            const checkbox = element.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            
+            if (checkbox.checked) {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        }
+
+        /**
+         * 轉換函數
+         */
+        function convert(text, mode) {
+            const toFullwidth = (char) => String.fromCharCode(char.charCodeAt(0) + 0xFEE0);
+            const toHalfwidth = (char) => String.fromCharCode(char.charCodeAt(0) - 0xFEE0);
+
+            const fullwidthPunctMap = {
+                "!": "！", ",": "，", ".": "。", ":": "：", ";": "；",
+                "?": "？", "(": "（", ")": "）", "[": "［", "]": "］",
+                "{": "｛", "}": "｝", "<": "＜", ">": "＞", '"': "＂", "'": "＇"
+            };
+
+            const halfwidthPunctMap = Object.fromEntries(
+                Object.entries(fullwidthPunctMap).map(([k, v]) => [v, k])
+            );
+
+            const fullwidthChar = (s) => s.replace(/[!-~]/g, (c) => toFullwidth(c));
+            const halfwidthChar = (s) => s.replace(/[！-～]/g, (c) => toHalfwidth(c));
+            const convertPunct = (s, to = "full") => {
+                const map = to === "full" ? fullwidthPunctMap : halfwidthPunctMap;
+                return s.replace(/[\!\,\.\:\;\?\(\)\[\]\{\}<>\"\'！，。：；？（）［］｛｝＜＞＂＇]/g, (c) => map[c] || c);
+            };
+
+            switch (parseInt(mode)) {
+                case 1: return fullwidthChar(text);
+                case 2: return halfwidthChar(text);
+                case 3: return convertPunct(text, "full");
+                case 4: return convertPunct(text, "half");
+                case 5: return text.replace(/[A-Za-z]/g, (c) => toFullwidth(c));
+                case 6: return text.replace(/[Ａ-Ｚａ-ｚ]/g, (c) => toHalfwidth(c));
+                case 9:
+                    return text.replace(/([\u4e00-\u9fff])\s+([，。！？：；、])/g, "$1$2");
+                case 10:
+                    return text.replace(/([\u4e00-\u9fff])([A-Za-z0-9])/g, "$1 $2")
+                               .replace(/([A-Za-z0-9])([\u4e00-\u9fff])/g, "$1 $2");
+                case 11:
+                    return text.replace(/\n/g, '')
+                              .replace(/\s+/g, ' ')
+                              .trim();
+                default: return text;
+            }
+        }
+
+        /**
+         * 執行轉換
+         */
+        function runConvert() {
+            let text = document.getElementById("inputText").value;
+            
+            if (!text.trim()) {
+                alert('請先輸入要轉換的文字！');
+                return;
+            }
+
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            const modes = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            
+            if (modes.length === 0) {
+                alert('請選擇至少一種轉換模式！');
+                return;
+            }
+
+            modes.forEach(mode => {
+                text = convert(text, mode);
+            });
+
+            const outputText = document.getElementById("outputText");
+            outputText.value = text;
+            
+            outputText.style.animation = 'fadeIn 0.3s ease-out';
+            setTimeout(() => {
+                outputText.style.animation = '';
+            }, 300);
+        }
+
+        /**
+         * 複製結果
+         */
+        async function copyResult() {
+            const outputText = document.getElementById("outputText");
+            const copyBtn = document.querySelector('.btn-copy');
+            
+            if (!outputText.value) {
+                alert('沒有內容可複製！');
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(outputText.value);
+                
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '已複製！';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+                
+            } catch (err) {
+                outputText.select();
+                document.execCommand('copy');
+                alert('內容已複製到剪貼簿！');
+            }
+        }
+
+        /**
+         * 套用建議模式
+         */
+        function applyRecommended() {
+            const recommended = [3, 6, 9, 10, 11];
+            
+            document.querySelectorAll('.mode-item').forEach(item => {
+                item.classList.remove('active');
+                item.querySelector('input[type="checkbox"]').checked = false;
+            });
+            
+            recommended.forEach(mode => {
+                const checkbox = document.getElementById(`mode${mode}`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                    checkbox.closest('.mode-item').classList.add('active');
+                }
+            });
+            
+            alert('已套用建議模式：標點全形、英文半形、去除標點間空白、中英空白、去掉斷行');
+        }
+
+        /**
+         * 清除所有內容
+         */
+        function clearAll() {
+            document.getElementById("inputText").value = '';
+            document.getElementById("outputText").value = '';
+            
+            document.querySelectorAll('.mode-item').forEach(item => {
+                item.classList.remove('active');
+                item.querySelector('input[type="checkbox"]').checked = false;
+            });
+        }
+
+        // 鍵盤快捷鍵支援
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                runConvert();
+            }
+            
+            if (e.ctrlKey && e.key === 'c' && document.activeElement.id === 'outputText') {
+                copyResult();
+            }
+        });
+
+        // 拖放功能支援
+        const inputTextarea = document.getElementById('inputText');
+        
+        inputTextarea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.backgroundColor = '#f0f8ff';
+        });
+        
+        inputTextarea.addEventListener('dragleave', function(e) {
+            this.style.backgroundColor = '';
+        });
+        
+        inputTextarea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.backgroundColor = '';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type === 'text/plain') {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        inputTextarea.value = e.target.result;
+                    };
+                    reader.readAsText(file);
+                }
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 頁面初始化完成
+        });
+    </script>
+</body>
+</html>

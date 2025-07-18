@@ -935,6 +935,15 @@
                 e.preventDefault();
                 clearAll();
             }
+            
+            // 切換深色/淺色模式 (D)
+            if (e.key === 'D' && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) {
+                // 只有在沒有焦點在輸入框時才觸發，避免干擾正常輸入
+                if (document.activeElement.id !== 'inputText') {
+                    e.preventDefault();
+                    toggleTheme();
+                }
+            }
         });
 
         // 拖放功能支援

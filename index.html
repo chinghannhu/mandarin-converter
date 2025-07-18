@@ -185,13 +185,79 @@
         }
 
         .header p {
-            font-size: 1em;
+            font-size: 1.1em;
             opacity: 0.8;
         }
 
         .content {
             padding: 40px;
             background: var(--content-bg);
+        }
+
+        .input-output-section {
+            margin-bottom: 30px;
+        }
+
+        .text-container {
+            background: var(--input-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .text-container:focus-within {
+            border-color: #5abdf7;
+            box-shadow: 0 0 0 3px rgba(90, 189, 247, 0.1);
+        }
+
+        .input-area, .output-area {
+            flex: 1;
+            padding: 15px;
+        }
+
+        .input-area label, .output-area label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 0 15px;
+        }
+
+        .text-input, .text-output {
+            width: 100%;
+            height: 150px;
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            font-size: 16px;
+            resize: vertical;
+            font-family: inherit;
+            background: transparent;
+            color: var(--text-color);
+            outline: none;
+            min-height: 150px;
+            max-height: 500px;
+        }
+
+        .text-input::placeholder, .text-output::placeholder {
+            color: var(--placeholder-color);
+        }
+
+        .copy-clear-controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .input-section {
@@ -205,28 +271,15 @@
             color: var(--text-secondary);
         }
 
-        .text-input {
-            width: 100%;
-            height: 120px;
-            padding: 15px;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 16px;
-            resize: vertical;
-            transition: border-color 0.3s ease, background-color 0.3s ease;
-            font-family: inherit;
-            background: var(--input-bg);
-            color: var(--text-color);
+        .output-section {
+            margin-bottom: 20px;
         }
 
-        .text-input:focus {
-            outline: none;
-            border-color: #5abdf7;
-            box-shadow: 0 0 0 3px rgba(90, 189, 247, 0.1);
-        }
-
-        .text-input::placeholder {
-            color: var(--placeholder-color);
+        .output-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
         }
 
         .mode-section {
@@ -372,35 +425,6 @@
             background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
         }
 
-        .output-section {
-            margin-bottom: 20px;
-        }
-
-        .output-section label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .text-output {
-            width: 100%;
-            height: 120px;
-            padding: 15px;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 16px;
-            resize: vertical;
-            background: var(--input-bg);
-            color: var(--text-color);
-            font-family: inherit;
-            transition: background-color 0.3s ease;
-        }
-
-        .text-output::placeholder {
-            color: var(--placeholder-color);
-        }
-
         .stats {
             background: var(--stats-bg);
             padding: 20px;
@@ -435,44 +459,69 @@
             letter-spacing: 1px;
         }
 
+        /* Footer styles */
         .footer {
             background: var(--footer-bg);
-            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            padding: 30px;
             text-align: center;
             color: var(--text-muted);
             font-size: 14px;
-            border-top: 1px solid var(--border-color);
+            line-height: 1.6;
         }
 
-        .footer a {
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-reference {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .footer-reference a {
             color: #5abdf7;
             text-decoration: none;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid transparent;
         }
 
-        .footer a:hover {
-            text-decoration: underline;
+        .footer-reference a:hover {
+            color: #4facfe;
+            border-bottom-color: #4facfe;
         }
 
-        .footer .heart {
-            color: #e74c3c;
+        .footer-made {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-heart {
+            color: #ff6b6b;
             font-size: 16px;
-            animation: pulse 2s infinite;
+            animation: heartbeat 2s ease-in-out infinite;
         }
 
-        @keyframes pulse {
+        @keyframes heartbeat {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-            @media (max-width: 768px) {
+        @media (max-width: 768px) {
             .header h1 {
-                font-size: 1.4em;
+                font-size: 1.6em;
                 flex-direction: row;
                 gap: 10px;
                 justify-content: flex-start;
@@ -496,22 +545,71 @@
             }
             
             .mode-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .mode-item {
+                padding: 8px;
+            }
+
+            .mode-item label {
+                font-size: 12px;
+                gap: 6px;
+            }
+
+            .mode-item label::before {
+                width: 14px;
+                height: 14px;
             }
             
             .controls {
                 flex-direction: column;
                 align-items: center;
             }
+
+            .copy-clear-controls {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
             
             .stats {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .footer {
+                padding: 20px;
+                font-size: 12px;
+            }
+            
+            .footer-content {
+                gap: 8px;
+            }
+            
+            .footer-reference,
+            .footer-made {
+                font-size: 12px;
+            }
+            
+            .footer-heart {
+                font-size: 14px;
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-
     <div class="container">
         <div class="header">
             <h1><a href="#" onclick="goHome()">中文全形半形轉換工具</a>
@@ -530,13 +628,31 @@
         </div>
 
         <div class="content">
-            <div class="input-section">
-                <label for="inputText">輸入文字</label>
-                <textarea 
-                    id="inputText" 
-                    class="text-input" 
-                    placeholder="在此輸入您要轉換的中文文字..."
-                ></textarea>
+            <div class="input-output-section">
+                <div class="text-container">
+                    <div class="input-area">
+                        <label for="inputText" id="textLabel">輸入文字</label>
+                        <textarea 
+                            id="inputText" 
+                            class="text-input" 
+                            placeholder="在此輸入您要轉換的中文文字..."
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="copy-clear-controls">
+                    <button class="btn btn-recommended" onclick="applyRecommended()">
+                        套用建議模式
+                    </button>
+                    <button class="btn btn-convert" onclick="runConvert()">
+                        轉換
+                    </button>
+                    <button class="btn btn-copy" onclick="copyResult()">
+                        複製結果
+                    </button>
+                    <button class="btn btn-clear" onclick="clearAll()">
+                        清除
+                    </button>
+                </div>
             </div>
 
             <div class="mode-section">
@@ -580,43 +696,26 @@
                     </div>
                 </div>
             </div>
-
-            <div class="controls">
-                <button class="btn btn-convert" onclick="runConvert()">
-                    轉換
-                </button>
-                <button class="btn btn-recommended" onclick="applyRecommended()">
-                    套用建議模式
-                </button>
-            </div>
-
-            <div class="output-section">
-                <label for="outputText">轉換結果</label>
-                <textarea 
-                    id="outputText" 
-                    class="text-output" 
-                    readonly
-                    placeholder="轉換結果將顯示在此處..."
-                ></textarea>
-                <div style="display: flex; gap: 15px; margin-top: 15px; justify-content: center;">
-                    <button class="btn btn-copy" onclick="copyResult()">
-                        複製結果
-                    </button>
-                    <button class="btn btn-clear" onclick="clearAll()">
-                        清除
-                    </button>
-                </div>
-            </div>
         </div>
+    </div>
 
-        <div class="footer">
-            <p>建議模式參考 <a href="https://github.com/sparanoid/chinese-copywriting-guidelines" target="_blank">《中文文案排版指北》</a></p>
-            <p style="margin-top: 10px;">Made in Taiwan with <span class="heart">❤️</span></p>
+    <div class="footer">
+        <div class="footer-content">
+            <div class="footer-reference">
+                <span>建議模式參考</span>
+                <a href="https://github.com/sparanoid/chinese-copywriting-guidelines" target="_blank" rel="noopener noreferrer">
+                    《中文文案排版指北》
+                </a>
+            </div>
+            <div class="footer-made">
+                <span>Made in Taiwan with</span>
+                <span class="footer-heart">❤️</span>
+            </div>
         </div>
     </div>
 
     <script>
-    // Theme management
+        // Theme management
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -638,6 +737,7 @@
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
         /**
          * 切換模式選擇
          */
@@ -719,12 +819,15 @@
                 text = convert(text, mode);
             });
 
-            const outputText = document.getElementById("outputText");
-            outputText.value = text;
+            const inputText = document.getElementById("inputText");
+            const textLabel = document.getElementById("textLabel");
             
-            outputText.style.animation = 'fadeIn 0.3s ease-out';
+            inputText.value = text;
+            textLabel.textContent = "轉換結果";
+            
+            inputText.style.animation = 'fadeIn 0.3s ease-out';
             setTimeout(() => {
-                outputText.style.animation = '';
+                inputText.style.animation = '';
             }, 300);
         }
 
@@ -732,16 +835,16 @@
          * 複製結果
          */
         async function copyResult() {
-            const outputText = document.getElementById("outputText");
+            const inputText = document.getElementById("inputText");
             const copyBtn = document.querySelector('.btn-copy');
             
-            if (!outputText.value) {
+            if (!inputText.value) {
                 alert('沒有內容可複製！');
                 return;
             }
             
             try {
-                await navigator.clipboard.writeText(outputText.value);
+                await navigator.clipboard.writeText(inputText.value);
                 
                 const originalText = copyBtn.textContent;
                 copyBtn.textContent = '已複製！';
@@ -753,7 +856,7 @@
                 }, 2000);
                 
             } catch (err) {
-                outputText.select();
+                inputText.select();
                 document.execCommand('copy');
                 alert('內容已複製到剪貼簿！');
             }
@@ -777,8 +880,6 @@
                     checkbox.closest('.mode-item').classList.add('active');
                 }
             });
-            
-            alert('已套用建議模式：標點全形、英文半形、去除標點間空白、中英空白、去掉斷行');
         }
 
         /**
@@ -786,7 +887,7 @@
          */
         function clearAll() {
             document.getElementById("inputText").value = '';
-            document.getElementById("outputText").value = '';
+            document.getElementById("textLabel").textContent = "輸入文字";
             
             document.querySelectorAll('.mode-item').forEach(item => {
                 item.classList.remove('active');
@@ -801,7 +902,7 @@
                 runConvert();
             }
             
-            if (e.ctrlKey && e.key === 'c' && document.activeElement.id === 'outputText') {
+            if (e.ctrlKey && e.key === 'c' && document.activeElement.id === 'inputText') {
                 copyResult();
             }
         });
@@ -836,7 +937,7 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            // 頁面初始化完成
+            loadTheme();
         });
     </script>
 </body>

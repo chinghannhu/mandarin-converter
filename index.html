@@ -936,10 +936,11 @@
                 clearAll();
             }
             
-            // 切換深色/淺色模式 (D)
-            if (e.key === 'D' && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) {
-                // 只有在沒有焦點在輸入框時才觸發，避免干擾正常輸入
-                if (document.activeElement.id !== 'inputText') {
+            // 切換深色/淺色模式 (D 或注音的 ㄎ)
+            if (((e.key === 'd' || e.key === 'D') || e.key === 'ㄎ') && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) {
+                // 避免在輸入框內觸發
+                if (document.activeElement.tagName !== 'INPUT' && 
+                    document.activeElement.tagName !== 'TEXTAREA') {
                     e.preventDefault();
                     toggleTheme();
                 }

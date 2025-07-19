@@ -705,6 +705,10 @@
                         <input type="checkbox" id="mode9" value="9">
                         <label for="mode9">去掉中文字與標點符號間空白</label>
                     </div>
+                    <div class="mode-item" onclick="toggleMode(this, 12)">
+                        <input type="checkbox" id="mode12" value="12">
+                        <label for="mode12">引號轉換為中文引號「」</label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -795,7 +799,9 @@
                 case 5: return text.replace(/[A-Za-z]/g, (c) => toFullwidth(c));
                 case 6: return text.replace(/[Ａ-Ｚａ-ｚ]/g, (c) => toHalfwidth(c));
                 case 9:
-                    return text.replace(/([\u4e00-\u9fff])\s+([，。！？：；、])/g, "$1$2");
+                    // 修正：去掉中文字、數字、英文與標點符號間的空白，也處理與數字、英文的空白
+                    return text.replace(/([\u4e00-\u9fff0-9A-Za-z])\s+([，。！？：；、．！？：；（）［］｛｝＜＞＂＇「」])/g, "$1$2")
+                              .replace(/([，。！？：；、．！？：；（）［］｛｝＜＞＂＇「」])\s+([\u4e00-\u9fff0-9A-Za-z])/g, "$1$2");
                 case 10:
                     return text.replace(/([\u4e00-\u9fff])([A-Za-z0-9])/g, "$1 $2")
                                .replace(/([A-Za-z0-9])([\u4e00-\u9fff])/g, "$1 $2");
@@ -803,6 +809,45 @@
                     return text.replace(/\n/g, '')
                               .replace(/\s+/g, ' ')
                               .trim();
+                case 12:
+                    // 將所有引號（半形和全形）轉換為中文引號「」
+                    // 使用更智能的配對算法
+                    let result = text;
+                    let quoteStack = [];
+                    let newText = '';
+                    
+                    for (let i = 0; i < result.length; i++) {
+                        const char = result[i];
+                        
+                        if (/["""''＂＇]/.test(char)) {
+                            // 檢查前一個字符來判斷是否為開引號
+                            const prevChar = i > 0 ? result[i - 1] : '';
+                            const nextChar = i < result.length - 1 ? result[i + 1] : '';
+                            
+                            // 判斷是開引號的條件：
+                            // 1. 前面是空白、開頭、標點符號、括號等
+                            // 2. 後面不是空白（避免孤立的引號）
+                            const isOpening = (
+                                (i === 0 || /[\s\(\[\{（［｛\n\r，。！？：；、]/.test(prevChar)) &&
+                                !/[\s]/.test(nextChar) &&
+                                nextChar !== ''
+                            );
+                            
+                            // 如果棧為空或判斷為開引號，則使用開引號
+                            if (quoteStack.length === 0 || isOpening) {
+                                newText += '「';
+                                quoteStack.push('「');
+                            } else {
+                                // 否則使用關引號並彈出棧
+                                newText += '」';
+                                quoteStack.pop();
+                            }
+                        } else {
+                            newText += char;
+                        }
+                    }
+                    
+                    return newText;
                 default: return text;
             }
         }
@@ -877,7 +922,8 @@
          * 套用建議模式
          */
         function applyRecommended() {
-            const recommended = [3, 6, 9, 10, 11];
+            // 修正建議模式：加入引號轉換功能
+            const recommended = [3, 6, 9, 10, 11, 12];
             
             document.querySelectorAll('.mode-item').forEach(item => {
                 item.classList.remove('active');

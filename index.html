@@ -745,6 +745,14 @@
                         <input type="checkbox" id="mode12" value="12">
                         <label for="mode12">引號轉換為中文引號「」</label>
                     </div>
+                    <div class="mode-item" onclick="toggleMode(this, 13)">
+                        <input type="checkbox" id="mode13" value="13">
+                        <label for="mode13">空白轉成全形</label>
+                    </div>
+                    <div class="mode-item" onclick="toggleMode(this, 14)">
+                        <input type="checkbox" id="mode14" value="14">
+                        <label for="mode14">空白轉成半形</label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -884,6 +892,12 @@
                     }
                     
                     return newText;
+                case 13:
+                    // 空白轉成全形（全形空白字符：\u3000）
+                    return text.replace(/\s/g, '　');
+                case 14:
+                    // 空白轉成半形（將全形空白轉為半形空白）
+                    return text.replace(/　/g, ' ');
                 default: return text;
             }
         }

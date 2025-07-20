@@ -224,6 +224,9 @@
             font-weight: 600;
             color: var(--text-secondary);
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .divider {
@@ -513,6 +516,31 @@
             animation: heartbeat 2s ease-in-out infinite;
         }
 
+        /* 自動複製提示樣式 */
+        .auto-copy-indicator {
+            background: linear-gradient(135deg, #00c851 0%, #28a745 100%);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            animation: copyPulse 0.6s ease-out;
+        }
+
+        .auto-copy-indicator svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        @keyframes copyPulse {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
         @keyframes heartbeat {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
@@ -642,7 +670,15 @@
             <div class="input-output-section">
                 <div class="text-container">
                     <div class="input-area">
-                        <label for="inputText" id="textLabel">輸入文字</label>
+                        <label for="inputText" id="textLabel">
+                            輸入文字
+                            <span id="autoCopyIndicator" class="auto-copy-indicator" style="display: none;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20,6 9,17 4,12"></polyline>
+                                </svg>
+                                已自動複製
+                            </span>
+                        </label>
                         <textarea 
                             id="inputText" 
                             class="text-input" 
@@ -853,6 +889,47 @@
         }
 
         /**
+         * 自動複製到剪貼簿
+         */
+        async function autoCopyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showAutoCopyIndicator();
+                return true;
+            } catch (err) {
+                // 如果現代 API 失敗，嘗試舊方法
+                try {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    textArea.style.position = 'fixed';
+                    textArea.style.opacity = '0';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showAutoCopyIndicator();
+                    return true;
+                } catch (fallbackErr) {
+                    console.error('自動複製失敗:', fallbackErr);
+                    return false;
+                }
+            }
+        }
+
+        /**
+         * 顯示自動複製指示器
+         */
+        function showAutoCopyIndicator() {
+            const indicator = document.getElementById('autoCopyIndicator');
+            indicator.style.display = 'inline-flex';
+            
+            // 3秒後隱藏指示器
+            setTimeout(() => {
+                indicator.style.display = 'none';
+            }, 3000);
+        }
+
+        /**
          * 執行轉換
          */
         function runConvert() {
@@ -879,12 +956,20 @@
             const textLabel = document.getElementById("textLabel");
             
             inputText.value = text;
-            textLabel.textContent = "轉換結果";
+            textLabel.innerHTML = `轉換結果 <span id="autoCopyIndicator" class="auto-copy-indicator" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20,6 9,17 4,12"></polyline>
+                </svg>
+                已自動複製
+            </span>`;
             
             inputText.style.animation = 'fadeIn 0.3s ease-out';
             setTimeout(() => {
                 inputText.style.animation = '';
             }, 300);
+
+            // 自動複製轉換結果
+            autoCopyToClipboard(text);
         }
 
         /**
@@ -944,7 +1029,8 @@
          */
         function clearAll() {
             document.getElementById("inputText").value = '';
-            document.getElementById("textLabel").textContent = "輸入文字";
+            const textLabel = document.getElementById("textLabel");
+            textLabel.innerHTML = '輸入文字';
             
             document.querySelectorAll('.mode-item').forEach(item => {
                 item.classList.remove('active');

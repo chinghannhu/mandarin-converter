@@ -1,12 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <circle cx="16" cy="16" r="16" fill="#5abdf7"/>
-  <defs>
-    <linearGradient id="arrowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#e8f4ff;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <path d="M6 16 L12 10 L12 13 L20 13 L20 19 L12 19 L12 22 Z" fill="url(#arrowGradient)" stroke="#4facfe" stroke-width="0.5"/>
-  <path d="M26 16 L20 22 L20 19 L12 19 L12 13 L20 13 L20 10 Z" fill="url(#arrowGradient)" stroke="#4facfe" stroke-width="0.5"/>
-  <rect x="12" y="14.5" width="8" height="3" fill="#ffffff" opacity="0.9"/>
-</svg>
+<?xml version="1.0"?><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g><path d="M0 0h24v24H0z" fill="none"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-13H8v2h9l-5-5v3zm-5 4l5 5v-3h4v-2H7z"/></g></svg>

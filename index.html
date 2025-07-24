@@ -6,6 +6,21 @@
     <title>中文全形半形轉換工具 | Mandarin Full Half Width Converter</title>
     <meta name="description" content="中文全形半形轉換工具，支援標點符號、英文字母、數字轉換，遵循中文文案排版指北規範。">
     <meta name="keywords" content="中文轉換,全形半形,標點符號,文案排版,Mandarin converter,Traditional Chinese">
+    <!-- 載入 Inter 字型 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 強制字體載入 -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    </style>
+    
+    <!-- 載入 Sora 字型 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet">
+    
     <!-- SVG favicon (現代瀏覽器) -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <!-- PNG favicon (後備選項) -->
@@ -70,10 +85,16 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-weight: inherit;
+            font-optical-sizing: auto;
+            font-style: normal;
         }
 
         body {
-            font-family: 'Sora', sans-serif;
+            font-family: "Sora", system-ui, -apple-system, "Segoe UI", "Roboto", "Ubuntu", "Cantarell", "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-optical-sizing: auto;
+            font-weight: 400 !important;
+            font-style: normal;
             background: var(--bg-color);
             min-height: 100vh;
             padding: 20px;
@@ -186,6 +207,7 @@
 
         .header p {
             font-size: 1.1em;
+            font-weight: 400 !important;
             opacity: 0.8;
         }
 
@@ -242,6 +264,9 @@
             border: none;
             border-radius: 0;
             font-size: 16px;
+            font-weight: 400;
+            font-optical-sizing: auto;
+            font-style: normal;
             resize: vertical;
             font-family: inherit;
             background: transparent;
@@ -253,6 +278,9 @@
 
         .text-input::placeholder, .text-output::placeholder {
             color: var(--placeholder-color);
+            font-weight: 400;
+            font-optical-sizing: auto;
+            font-style: normal;
         }
 
         .copy-clear-controls {
@@ -293,6 +321,7 @@
             margin-bottom: 20px;
             color: var(--text-color);
             font-size: 1.2em;
+            font-weight: 600;
         }
 
         .mode-grid {
@@ -378,6 +407,7 @@
             text-transform: none;
             color: white;
             min-width: 120px;
+            font-family: inherit;
         }
 
         .btn:hover {
@@ -394,6 +424,7 @@
             font-size: 16px;
             padding: 15px 30px;
             border: 1px solid #ffffff;
+            font-weight: 600;
         }
 
         .btn-convert:hover {
@@ -403,6 +434,7 @@
 
         .btn-copy {
             background: linear-gradient(135deg, #5ABDF7 0%, #4FACFE 100%);
+            font-weight: 600;
         }
 
         .btn-copy:hover {
@@ -417,6 +449,7 @@
         .btn-recommended {
             background: linear-gradient(135deg, #000000 0%, #888888 100%);
             border: 1px solid #ffffff;
+            font-weight: 600;
         }
 
         .btn-recommended:hover {
@@ -424,8 +457,9 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
         }
 
-        .btn-clear {
+        .btn-clear, .btn-clear-selection {
             background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            font-weight: 600;
         }
 
         .stats {
@@ -457,6 +491,7 @@
 
         .stat-label {
             font-size: 12px;
+            font-weight: 400;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -470,6 +505,7 @@
             text-align: center;
             color: var(--text-muted);
             font-size: 14px;
+            font-weight: 400;
             line-height: 1.6;
         }
 
@@ -488,6 +524,7 @@
             gap: 5px;
             flex-wrap: wrap;
             justify-content: center;
+            font-weight: 400;
         }
 
         .footer-reference a {
@@ -495,6 +532,7 @@
             text-decoration: none;
             transition: all 0.3s ease;
             border-bottom: 1px solid transparent;
+            font-weight: 500;
         }
 
         .footer-reference a:hover {
@@ -508,11 +546,13 @@
             gap: 5px;
             justify-content: center;
             flex-wrap: wrap;
+            font-weight: 400;
         }
 
         .footer-heart {
             color: #ff6b6b;
             font-size: 16px;
+            font-weight: 400;
             animation: heartbeat 2s ease-in-out infinite;
         }
 
@@ -696,8 +736,11 @@
                     <button class="btn btn-copy" onclick="copyResult()">
                         複製結果
                     </button>
+                    <button class="btn btn-clear-selection" onclick="clearSelection()">
+                        清除勾選
+                    </button>
                     <button class="btn btn-clear" onclick="clearAll()">
-                        清除
+                        全部清除
                     </button>
                 </div>
             </div>
@@ -729,13 +772,13 @@
                         <input type="checkbox" id="mode6" value="6">
                         <label for="mode6">英文轉成半形</label>
                     </div>
-                    <div class="mode-item" onclick="toggleMode(this, 4)">
-                        <input type="checkbox" id="mode4" value="4">
-                        <label for="mode4">標點符號轉成半形</label>
-                    </div>
                     <div class="mode-item" onclick="toggleMode(this, 11)">
                         <input type="checkbox" id="mode11" value="11">
                         <label for="mode11">去掉斷行和多餘空白</label>
+                    </div>
+                    <div class="mode-item" onclick="toggleMode(this, 15)">
+                        <input type="checkbox" id="mode15" value="15">
+                        <label for="mode15">去掉多餘空白但保留斷行</label>
                     </div>
                     <div class="mode-item" onclick="toggleMode(this, 9)">
                         <input type="checkbox" id="mode9" value="9">
@@ -753,6 +796,10 @@
                         <input type="checkbox" id="mode14" value="14">
                         <label for="mode14">空白轉成半形</label>
                     </div>
+                    <div class="mode-item" onclick="toggleMode(this, 4)">
+                        <input type="checkbox" id="mode4" value="4">
+                        <label for="mode4">標點符號轉成半形</label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -768,7 +815,7 @@
             </div>
             <div class="footer-made">
                 <span>Made in Taiwan with</span>
-                <span class="footer-heart">❤️</span>
+                <span class="footer-heart">♥</span>
             </div>
         </div>
     </div>
@@ -898,6 +945,11 @@
                 case 14:
                     // 空白轉成半形（將全形空白轉為半形空白）
                     return text.replace(/　/g, ' ');
+                case 15:
+                    // 去掉多餘空白但保留斷行
+                    return text.replace(/[ \t　]+/g, ' ')  // 將多個連續空白（包括全形空白、tab）替換為單個半形空白
+                              .replace(/[ \t　]+$/gm, '')  // 去掉每行結尾的空白
+                              .replace(/^[ \t　]+/gm, ''); // 去掉每行開頭的空白
                 default: return text;
             }
         }
@@ -1039,6 +1091,16 @@
         }
 
         /**
+         * 清除所有勾選
+         */
+        function clearSelection() {
+            document.querySelectorAll('.mode-item').forEach(item => {
+                item.classList.remove('active');
+                item.querySelector('input[type="checkbox"]').checked = false;
+            });
+        }
+
+        /**
          * 清除所有內容
          */
         function clearAll() {
@@ -1046,10 +1108,8 @@
             const textLabel = document.getElementById("textLabel");
             textLabel.innerHTML = '輸入文字';
             
-            document.querySelectorAll('.mode-item').forEach(item => {
-                item.classList.remove('active');
-                item.querySelector('input[type="checkbox"]').checked = false;
-            });
+            // 也清除所有勾選
+            clearSelection();
         }
 
         // 鍵盤快捷鍵支援

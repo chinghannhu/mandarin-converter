@@ -756,6 +756,10 @@
                         <input type="checkbox" id="mode10" value="10">
                         <label for="mode10">中文與英文數字之間加空白</label>
                     </div>
+                    <div class="mode-item" onclick="toggleMode(this, 16)">
+                        <input type="checkbox" id="mode16" value="16">
+                        <label for="mode16">連接斷句，加入標點符號</label>
+                    </div>
                     <div class="mode-item" onclick="toggleMode(this, 1)">
                         <input type="checkbox" id="mode1" value="1">
                         <label for="mode1">全文轉成全形</label>
@@ -950,8 +954,67 @@
                     return text.replace(/[ \t　]+/g, ' ')  // 將多個連續空白（包括全形空白、tab）替換為單個半形空白
                               .replace(/[ \t　]+$/gm, '')  // 去掉每行結尾的空白
                               .replace(/^[ \t　]+/gm, ''); // 去掉每行開頭的空白
+                case 16:
+                    // 連接斷句，加入標點符號
+                    return connectSentences(text);
                 default: return text;
             }
+        }
+
+        /**
+         * 連接斷句功能 - 新增的模式 16
+         * 處理換行分隔或空格分隔的句子片段，自動加入適當的標點符號
+         */
+        function connectSentences(text) {
+            // 先統一處理換行符號，將其轉換為空格
+            let processedText = text.replace(/\n+/g, ' ').trim();
+            
+            // 用多個空格分割句子片段
+            let segments = processedText.split(/\s+/).filter(segment => segment.length > 0);
+            
+            // 如果沒有內容或只有一個片段
+            if (segments.length === 0) {
+                return '';
+            }
+            
+            if (segments.length === 1) {
+                let single = segments[0];
+                // 確保句尾有句號（如果還沒有標點符號的話）
+                if (!/[。！？]$/.test(single)) {
+                    single += '。';
+                }
+                return single;
+            }
+            
+            let result = '';
+            
+            for (let i = 0; i < segments.length; i++) {
+                let segment = segments[i];
+                
+                // 加入這個片段
+                result += segment;
+                
+                // 檢查這個片段是否已經有結尾標點符號
+                if (/[。！？]$/.test(segment)) {
+                    // 如果已經有結尾標點，且不是最後一個片段，加空格
+                    if (i < segments.length - 1) {
+                        result += ' ';
+                    }
+                } else {
+                    // 如果沒有結尾標點
+                    if (i === segments.length - 1) {
+                        // 最後一個片段，檢查是否需要加句號
+                        if (!/[。！？]$/.test(segment)) {
+                            result += '。';
+                        }
+                    } else {
+                        // 不是最後一個片段，加逗號
+                        result += '，';
+                    }
+                }
+            }
+            
+            return result;
         }
 
         /**
@@ -1073,8 +1136,8 @@
          * 套用建議模式
          */
         function applyRecommended() {
-            // 修正建議模式：加入引號轉換功能
-            const recommended = [3, 6, 9, 10, 11, 12];
+            // 修正建議模式：加入引號轉換功能和連接斷句功能
+            const recommended = [3, 6, 9, 10, 11, 12, 16];
             
             document.querySelectorAll('.mode-item').forEach(item => {
                 item.classList.remove('active');

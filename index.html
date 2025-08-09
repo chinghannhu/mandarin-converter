@@ -964,6 +964,7 @@
         /**
          * 連接斷句功能 - 新增的模式 16
          * 處理換行分隔或空格分隔的句子片段，自動加入適當的標點符號
+         * 英文片段之間不加標點符號，中文片段之間加逗號
          */
         function connectSentences(text) {
             // 先統一處理換行符號，將其轉換為空格
@@ -978,12 +979,7 @@
             }
             
             if (segments.length === 1) {
-                let single = segments[0];
-                // 確保句尾有句號（如果還沒有標點符號的話）
-                if (!/[。！？]$/.test(single)) {
-                    single += '。';
-                }
-                return single;
+                return segments[0];
             }
             
             let result = '';
@@ -994,21 +990,35 @@
                 // 加入這個片段
                 result += segment;
                 
-                // 檢查這個片段是否已經有結尾標點符號
-                if (/[。！？]$/.test(segment)) {
-                    // 如果已經有結尾標點，且不是最後一個片段，加空格
-                    if (i < segments.length - 1) {
+                // 如果不是最後一個片段，決定要加什麼分隔符
+                if (i < segments.length - 1) {
+                    let currentSegment = segment;
+                    let nextSegment = segments[i + 1];
+                    
+                    // 檢查當前片段是否已經有結尾標點符號
+                    if (/[。！？：；，]$/.test(currentSegment)) {
+                        result += ' ';
+                        continue;
+                    }
+                    
+                    // 判斷當前片段和下一個片段的語言類型
+                    let isCurrentEnglish = /^[A-Za-z0-9\s\-_.,!?;:'"()]+$/.test(currentSegment);
+                    let isNextEnglish = /^[A-Za-z0-9\s\-_.,!?;:'"()]+$/.test(nextSegment);
+                    
+                    // 如果當前片段是英文，且下一個片段也是英文，只加空格
+                    if (isCurrentEnglish && isNextEnglish) {
                         result += ' ';
                     }
-                } else {
-                    // 如果沒有結尾標點
-                    if (i === segments.length - 1) {
-                        // 最後一個片段，檢查是否需要加句號
-                        if (!/[。！？]$/.test(segment)) {
-                            result += '。';
-                        }
-                    } else {
-                        // 不是最後一個片段，加逗號
+                    // 如果當前片段是英文，下一個片段是中文，只加空格
+                    else if (isCurrentEnglish && !isNextEnglish) {
+                        result += ' ';
+                    }
+                    // 如果當前片段是中文，下一個片段是英文，只加空格
+                    else if (!isCurrentEnglish && isNextEnglish) {
+                        result += ' ';
+                    }
+                    // 如果兩個片段都是中文，加逗號
+                    else {
                         result += '，';
                     }
                 }

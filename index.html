@@ -6,15 +6,6 @@
     <title>中文全形半形轉換工具 | Mandarin Full Half Width Converter</title>
     <meta name="description" content="中文全形半形轉換工具，支援標點符號、英文字母、數字轉換，遵循中文文案排版指北規範。">
     <meta name="keywords" content="中文轉換,全形半形,標點符號,文案排版,Mandarin converter,Traditional Chinese">
-    <!-- 載入 Inter 字型 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- 強制字體載入 -->
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    </style>
     
     <!-- 載入 Sora 字型 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -285,32 +276,17 @@
 
         .copy-clear-controls {
             display: flex;
+            flex-direction: column;
             gap: 15px;
             margin-top: 15px;
+            align-items: center;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 15px;
             justify-content: center;
             flex-wrap: wrap;
-        }
-
-        .input-section {
-            margin-bottom: 30px;
-        }
-
-        .input-section label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .output-section {
-            margin-bottom: 20px;
-        }
-
-        .output-section label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: var(--text-secondary);
         }
 
         .mode-section {
@@ -388,113 +364,83 @@
             font-weight: bold;
         }
 
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
         .btn {
-            padding: 12px 24px;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 30px;
+            margin: 5px;
             border: none;
             border-radius: 25px;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: inherit;
             font-size: 14px;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
             text-transform: none;
-            color: white;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            overflow: hidden;
             min-width: 120px;
-            font-family: inherit;
+            height: 50px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn:hover {
+            background-color: #2a2a2a;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px var(--btn-shadow);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
 
         .btn:active {
             transform: translateY(0);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
+        /* 不同按鈕的顏色配置 */
         .btn-convert {
-            background: linear-gradient(135deg, #2c2c2c 0%, #000000 100%);
+            background-color: #2563eb;
             font-size: 16px;
-            padding: 15px 30px;
-            border: 1px solid #ffffff;
-            font-weight: 600;
+            min-width: 140px;
         }
 
         .btn-convert:hover {
-            background: linear-gradient(135deg, #404040 0%, #1a1a1a 100%);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            background-color: #3b82f6;
         }
 
-        .btn-copy {
-            background: linear-gradient(135deg, #5ABDF7 0%, #4FACFE 100%);
-            font-weight: 600;
+        .btn-clear {
+            background-color: #dc2626;
         }
 
-        .btn-copy:hover {
-            background: linear-gradient(135deg, #6ACDFF 0%, #5FBCFF 100%);
-            box-shadow: 0 5px 15px rgba(90, 189, 247, 0.4);
+        .btn-clear:hover {
+            background-color: #ef4444;
         }
 
-        .btn-copy.copied {
-            background: linear-gradient(135deg, #5abdf7 0%, #4facfe 100%);
+        .btn-recommended,
+        .btn-copy,
+        .btn-clear-selection {
+            background-color: #1a1a1a;
         }
 
-        .btn-recommended {
-            background: linear-gradient(135deg, #000000 0%, #888888 100%);
-            border: 1px solid #ffffff;
-            font-weight: 600;
-        }
-
-        .btn-recommended:hover {
-            background: linear-gradient(135deg, #1a1a1a 0%, #9a9a9a 100%);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-        }
-
-        .btn-clear, .btn-clear-selection {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            font-weight: 600;
-        }
-
-        .stats {
-            background: var(--stats-bg);
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-        }
-
-        .stat-item {
-            background: var(--stat-item-bg);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px var(--stat-shadow);
-            border: 1px solid var(--border-color);
-        }
-
-        .stat-number {
-            font-size: 24px;
-            font-weight: 700;
-            color: #5abdf7;
-            display: block;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            font-weight: 400;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .btn-recommended:hover,
+        .btn-copy:hover,
+        .btn-clear-selection:hover {
+            background-color: #2a2a2a;
         }
 
         /* Footer styles */
@@ -630,32 +576,36 @@
                 width: 14px;
                 height: 14px;
             }
-            
-            .controls {
+
+            .copy-clear-controls {
+                display: flex;
                 flex-direction: column;
+                gap: 10px;
                 align-items: center;
             }
 
-            .copy-clear-controls {
+            .button-row {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 10px;
-                align-items: center;
+                width: 100%;
+                max-width: 400px;
+            }
+
+            .button-row:last-child {
+                grid-template-columns: 1fr 1fr 1fr;
             }
 
             .copy-clear-controls .btn {
                 min-width: auto;
                 width: 100%;
-                padding: 12px 16px;
+                padding: 15px 16px;
                 font-size: 13px;
                 text-align: center;
                 white-space: nowrap;
+                height: 45px;
             }
             
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
             .footer {
                 padding: 20px;
                 font-size: 12px;
@@ -673,12 +623,6 @@
             .footer-heart {
                 font-size: 14px;
             }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
         }
 
         @keyframes fadeIn {
@@ -727,21 +671,25 @@
                     </div>
                 </div>
                 <div class="copy-clear-controls">
-                    <button class="btn btn-recommended" onclick="applyRecommended()">
-                        套用建議模式
-                    </button>
-                    <button class="btn btn-convert" onclick="runConvert()">
-                        轉換
-                    </button>
-                    <button class="btn btn-copy" onclick="copyResult()">
-                        複製結果
-                    </button>
-                    <button class="btn btn-clear-selection" onclick="clearSelection()">
-                        清除勾選
-                    </button>
-                    <button class="btn btn-clear" onclick="clearAll()">
-                        全部清除
-                    </button>
+                    <div class="button-row">
+                        <button class="btn btn-convert" onclick="runConvert()">
+                            轉換
+                        </button>
+                        <button class="btn btn-clear" onclick="clearAll()">
+                            全部清除
+                        </button>
+                    </div>
+                    <div class="button-row">
+                        <button class="btn btn-recommended" onclick="applyRecommended()">
+                            套用建議模式
+                        </button>
+                        <button class="btn btn-clear-selection" onclick="clearSelection()">
+                            清除勾選
+                        </button>
+                        <button class="btn btn-copy" onclick="copyResult()">
+                            複製結果
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -759,6 +707,14 @@
                     <div class="mode-item" onclick="toggleMode(this, 16)">
                         <input type="checkbox" id="mode16" value="16">
                         <label for="mode16">連接斷句，加入標點符號</label>
+                    </div>
+                    <div class="mode-item" onclick="toggleMode(this, 17)">
+                        <input type="checkbox" id="mode17" value="17">
+                        <label for="mode17">智慧斷句加標點</label>
+                    </div>
+                    <div class="mode-item" onclick="toggleMode(this, 18)">
+                        <input type="checkbox" id="mode18" value="18">
+                        <label for="mode18">去掉「然後」</label>
                     </div>
                     <div class="mode-item" onclick="toggleMode(this, 1)">
                         <input type="checkbox" id="mode1" value="1">
@@ -842,10 +798,142 @@
 
         // Home function
         function goHome() {
-            // Clear all inputs and reset form
             clearAll();
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /**
+         * 智慧斷句加標點功能 - 模式 17
+         * 自動在適當的地方加入標點符號，讓文字更有條理
+         */
+        function smartPunctuation(text) {
+            let result = text.trim();
+            
+            // 先移除多餘的空白但保留換行
+            result = result.replace(/[ \t　]+/g, ' ')
+                          .replace(/[ \t　]+$/gm, '')
+                          .replace(/^[ \t　]+/gm, '');
+            
+            // 定義需要在前面加逗號的關鍵詞
+            const commaKeywords = [
+                '然後', '接著', '後來', '之後', '再來', '接下來', '再說', '另外',
+                '而且', '並且', '同時', '此外', '除此之外', '不過', '但是', '可是',
+                '然而', '所以', '因此', '因為', '由於', '既然', '雖然', '儘管',
+                '如果', '假如', '要是', '當', '在', '於是', '結果', '最後',
+                '總之', '總而言之', '換句話說', '也就是說', '比如說', '例如',
+                '其實', '事實上', '實際上', '說實話', '老實說', '坦白說'
+            ];
+            
+            // 在關鍵詞前加逗號（如果前面不是標點符號或句首）
+            commaKeywords.forEach(keyword => {
+                const regex = new RegExp(`([^，。！？：；、\\s])${keyword}`, 'g');
+                result = result.replace(regex, `$1，${keyword}`);
+            });
+            
+            // 處理一些特殊情況的標點符號
+            // 在「這樣」、「那樣」等詞後面加逗號
+            result = result.replace(/([這那]樣)([然後接著後來之後])/g, '$1，$2');
+            
+            // 在「的話」後面加逗號
+            result = result.replace(/(的話)([^，。！？])/g, '$1，$2');
+            
+            // 處理「結果」相關的句型
+            result = result.replace(/(結果)([^，。！？])/g, '$1，$2');
+            
+            // 在某些副詞前加逗號
+            const adverbs = ['其實', '實際上', '事實上', '原來', '竟然', '居然', '果然'];
+            adverbs.forEach(adverb => {
+                const regex = new RegExp(`([^，。！？：；、\\s])${adverb}`, 'g');
+                result = result.replace(regex, `$1，${adverb}`);
+            });
+            
+            // 處理較長的句子，在適當的地方斷句
+            const sentences = result.split(/[。！？]/);
+            const processedSentences = sentences.map(sentence => {
+                if (sentence.length > 25) {
+                    sentence = sentence.replace(/([^，]{10,})([然後接著後來所以因此])/g, '$1，$2');
+                }
+                return sentence;
+            });
+            
+            result = processedSentences.join('。');
+            
+            // 確保文字結尾有標點符號
+            if (result.length > 0 && !/[。！？]$/.test(result)) {
+                result += '。';
+            }
+            
+            // 清理多餘的標點符號
+            result = result.replace(/，+/g, '，');
+            result = result.replace(/，([。！？])/g, '$1');
+            
+            return result;
+        }
+
+        /**
+         * 去掉「然後」功能 - 模式 18
+         * 移除文字中所有的「然後」詞語
+         */
+        function removeRanhou(text) {
+            let result = text;
+            
+            // 移除所有的「然後」
+            result = result.replace(/然後/g, '');
+            
+            // 清理可能產生的多餘空白
+            result = result.replace(/\s+/g, ' ');
+            
+            // 清理開頭和結尾的空白
+            result = result.trim();
+            
+            // 處理可能產生的重複標點符號
+            result = result.replace(/，+/g, '，');
+            result = result.replace(/。+/g, '。');
+            
+            // 處理標點符號前的空白
+            result = result.replace(/\s+([，。！？：；])/g, '$1');
+            
+            return result;
+        }
+
+        /**
+         * 連接斷句功能 - 模式 16
+         * 處理換行分隔或空格分隔的句子片段，自動加入適當的標點符號
+         */
+        function connectSentences(text) {
+            let processedText = text.replace(/\n+/g, ' ').trim();
+            let segments = processedText.split(/\s+/).filter(segment => segment.length > 0);
+            
+            if (segments.length === 0) return '';
+            if (segments.length === 1) return segments[0];
+            
+            let result = '';
+            
+            for (let i = 0; i < segments.length; i++) {
+                let segment = segments[i];
+                result += segment;
+                
+                if (i < segments.length - 1) {
+                    let currentSegment = segment;
+                    let nextSegment = segments[i + 1];
+                    
+                    if (/[。！？：；，]$/.test(currentSegment)) {
+                        result += ' ';
+                        continue;
+                    }
+                    
+                    let isCurrentEnglish = /^[A-Za-z0-9\s\-_.,!?;:'"()]+$/.test(currentSegment);
+                    let isNextEnglish = /^[A-Za-z0-9\s\-_.,!?;:'"()]+$/.test(nextSegment);
+                    
+                    if (isCurrentEnglish || isNextEnglish) {
+                        result += ' ';
+                    } else {
+                        result += '，';
+                    }
+                }
+            }
+            
+            return result;
         }
 
         /**
@@ -881,11 +969,8 @@
 
             const fullwidthChar = (s) => s.replace(/[!-~]/g, (c) => toFullwidth(c));
             
-            // 修正半形轉換函數，加入全形空白的處理
             const halfwidthChar = (s) => {
-                // 先處理全形空白 (U+3000) 轉為半形空白
                 let result = s.replace(/　/g, ' ');
-                // 再處理其他全形字符轉半形
                 result = result.replace(/[！-～]/g, (c) => toHalfwidth(c));
                 return result;
             };
@@ -903,7 +988,6 @@
                 case 5: return text.replace(/[A-Za-z]/g, (c) => toFullwidth(c));
                 case 6: return text.replace(/[Ａ-Ｚａ-ｚ]/g, (c) => toHalfwidth(c));
                 case 9:
-                    // 修正：去掉中文字、數字、英文與標點符號間的空白，也處理與數字、英文的空白
                     return text.replace(/([\u4e00-\u9fff0-9A-Za-z])\s+([，。！？：；、．！？：；（）［］｛｝＜＞＂＇「」])/g, "$1$2")
                               .replace(/([，。！？：；、．！？：；（）［］｛｝＜＞＂＇「」])\s+([\u4e00-\u9fff0-9A-Za-z])/g, "$1$2");
                 case 10:
@@ -914,8 +998,6 @@
                               .replace(/\s+/g, ' ')
                               .trim();
                 case 12:
-                    // 將所有引號（半形和全形）轉換為中文引號「」
-                    // 使用更智能的配對算法
                     let result = text;
                     let quoteStack = [];
                     let newText = '';
@@ -924,25 +1006,19 @@
                         const char = result[i];
                         
                         if (/["""''＂＇]/.test(char)) {
-                            // 檢查前一個字符來判斷是否為開引號
                             const prevChar = i > 0 ? result[i - 1] : '';
                             const nextChar = i < result.length - 1 ? result[i + 1] : '';
                             
-                            // 判斷是開引號的條件：
-                            // 1. 前面是空白、開頭、標點符號、括號等
-                            // 2. 後面不是空白（避免孤立的引號）
                             const isOpening = (
                                 (i === 0 || /[\s\(\[\{（［｛\n\r，。！？：；、]/.test(prevChar)) &&
                                 !/[\s]/.test(nextChar) &&
                                 nextChar !== ''
                             );
                             
-                            // 如果棧為空或判斷為開引號，則使用開引號
                             if (quoteStack.length === 0 || isOpening) {
                                 newText += '「';
                                 quoteStack.push('「');
                             } else {
-                                // 否則使用關引號並彈出棧
                                 newText += '」';
                                 quoteStack.pop();
                             }
@@ -953,87 +1029,21 @@
                     
                     return newText;
                 case 13:
-                    // 空白轉成全形（全形空白字符：\u3000）
                     return text.replace(/\s/g, '　');
                 case 14:
-                    // 空白轉成半形（將全形空白轉為半形空白）
                     return text.replace(/　/g, ' ');
                 case 15:
-                    // 去掉多餘空白但保留斷行
-                    return text.replace(/[ \t　]+/g, ' ')  // 將多個連續空白（包括全形空白、tab）替換為單個半形空白
-                              .replace(/[ \t　]+$/gm, '')  // 去掉每行結尾的空白
-                              .replace(/^[ \t　]+/gm, ''); // 去掉每行開頭的空白
+                    return text.replace(/[ \t　]+/g, ' ')
+                              .replace(/[ \t　]+$/gm, '')
+                              .replace(/^[ \t　]+/gm, '');
                 case 16:
-                    // 連接斷句，加入標點符號
                     return connectSentences(text);
+                case 17:
+                    return smartPunctuation(text);
+                case 18:
+                    return removeRanhou(text);
                 default: return text;
             }
-        }
-
-        /**
-         * 連接斷句功能 - 新增的模式 16
-         * 處理換行分隔或空格分隔的句子片段，自動加入適當的標點符號
-         * 英文片段之間不加標點符號，中文片段之間加逗號
-         */
-        function connectSentences(text) {
-            // 先統一處理換行符號，將其轉換為空格
-            let processedText = text.replace(/\n+/g, ' ').trim();
-            
-            // 用多個空格分割句子片段
-            let segments = processedText.split(/\s+/).filter(segment => segment.length > 0);
-            
-            // 如果沒有內容或只有一個片段
-            if (segments.length === 0) {
-                return '';
-            }
-            
-            if (segments.length === 1) {
-                return segments[0];
-            }
-            
-            let result = '';
-            
-            for (let i = 0; i < segments.length; i++) {
-                let segment = segments[i];
-                
-                // 加入這個片段
-                result += segment;
-                
-                // 如果不是最後一個片段，決定要加什麼分隔符
-                if (i < segments.length - 1) {
-                    let currentSegment = segment;
-                    let nextSegment = segments[i + 1];
-                    
-                    // 檢查當前片段是否已經有結尾標點符號
-                    if (/[。！？：；，]$/.test(currentSegment)) {
-                        result += ' ';
-                        continue;
-                    }
-                    
-                    // 判斷當前片段和下一個片段的語言類型
-                    let isCurrentEnglish = /^[A-Za-z0-9\s\-_.,!?;:'"()]+$/.test(currentSegment);
-                    let isNextEnglish = /^[A-Za-z0-9\s\-_.,!?;:'"()]+$/.test(nextSegment);
-                    
-                    // 如果當前片段是英文，且下一個片段也是英文，只加空格
-                    if (isCurrentEnglish && isNextEnglish) {
-                        result += ' ';
-                    }
-                    // 如果當前片段是英文，下一個片段是中文，只加空格
-                    else if (isCurrentEnglish && !isNextEnglish) {
-                        result += ' ';
-                    }
-                    // 如果當前片段是中文，下一個片段是英文，只加空格
-                    else if (!isCurrentEnglish && isNextEnglish) {
-                        result += ' ';
-                    }
-                    // 如果兩個片段都是中文，加逗號
-                    else {
-                        result += '，';
-                    }
-                }
-            }
-            
-            return result;
         }
 
         /**
@@ -1045,7 +1055,6 @@
                 showAutoCopyIndicator();
                 return true;
             } catch (err) {
-                // 如果現代 API 失敗，嘗試舊方法
                 try {
                     const textArea = document.createElement('textarea');
                     textArea.value = text;
@@ -1071,7 +1080,6 @@
             const indicator = document.getElementById('autoCopyIndicator');
             indicator.style.display = 'inline-flex';
             
-            // 3秒後隱藏指示器
             setTimeout(() => {
                 indicator.style.display = 'none';
             }, 3000);
@@ -1116,7 +1124,6 @@
                 inputText.style.animation = '';
             }, 300);
 
-            // 自動複製轉換結果
             autoCopyToClipboard(text);
         }
 
@@ -1155,8 +1162,7 @@
          * 套用建議模式
          */
         function applyRecommended() {
-            // 修正建議模式：加入引號轉換功能和連接斷句功能
-            const recommended = [3, 6, 9, 10, 11, 12, 16];
+            const recommended = [3, 6, 9, 10, 11, 12, 16, 17];
             
             document.querySelectorAll('.mode-item').forEach(item => {
                 item.classList.remove('active');
@@ -1189,44 +1195,35 @@
             document.getElementById("inputText").value = '';
             const textLabel = document.getElementById("textLabel");
             textLabel.innerHTML = '輸入文字';
-            
-            // 也清除所有勾選
             clearSelection();
         }
 
         // 鍵盤快捷鍵支援
         document.addEventListener('keydown', function(e) {
-            // 檢測作業系統 (Mac 或 Windows/Linux)
             const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
             const cmdKey = isMac ? e.metaKey : e.ctrlKey;
             
-            // 轉換功能 (Ctrl/Cmd + Enter)
             if (cmdKey && e.key === 'Enter') {
                 e.preventDefault();
                 runConvert();
             }
             
-            // 複製功能 (Ctrl/Cmd + C，當焦點在輸入框時)
             if (cmdKey && e.key === 'c' && document.activeElement.id === 'inputText') {
                 e.preventDefault();
                 copyResult();
             }
             
-            // 套用建議模式 (Ctrl + Shift + T，Mac 和 Windows 都用 Ctrl)
             if (e.ctrlKey && e.shiftKey && e.key === 'T') {
                 e.preventDefault();
                 applyRecommended();
             }
             
-            // 清除功能 (Ctrl + Shift + X，Mac 和 Windows 都用 Ctrl)
             if (e.ctrlKey && e.shiftKey && e.key === 'X') {
                 e.preventDefault();
                 clearAll();
             }
             
-            // 切換深色/淺色模式 (D 或注音的 ㄎ)
             if (((e.key === 'd' || e.key === 'D') || e.key === 'ㄎ') && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) {
-                // 避免在輸入框內觸發
                 if (document.activeElement.tagName !== 'INPUT' && 
                     document.activeElement.tagName !== 'TEXTAREA') {
                     e.preventDefault();

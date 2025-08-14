@@ -880,7 +880,16 @@
             );
 
             const fullwidthChar = (s) => s.replace(/[!-~]/g, (c) => toFullwidth(c));
-            const halfwidthChar = (s) => s.replace(/[！-～]/g, (c) => toHalfwidth(c));
+            
+            // 修正半形轉換函數，加入全形空白的處理
+            const halfwidthChar = (s) => {
+                // 先處理全形空白 (U+3000) 轉為半形空白
+                let result = s.replace(/　/g, ' ');
+                // 再處理其他全形字符轉半形
+                result = result.replace(/[！-～]/g, (c) => toHalfwidth(c));
+                return result;
+            };
+            
             const convertPunct = (s, to = "full") => {
                 const map = to === "full" ? fullwidthPunctMap : halfwidthPunctMap;
                 return s.replace(/[\!\,\.\:\;\?\(\)\[\]\{\}<>\"\'！，。：；？（）［］｛｝＜＞＂＇]/g, (c) => map[c] || c);

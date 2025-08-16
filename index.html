@@ -440,7 +440,7 @@
         .btn-recommended:hover,
         .btn-copy:hover,
         .btn-clear-selection:hover {
-            background-color: #2a2a2a;
+            background-color: #2a2a1a;
         }
 
         /* Footer styles */
@@ -958,7 +958,7 @@
             const toHalfwidth = (char) => String.fromCharCode(char.charCodeAt(0) - 0xFEE0);
 
             const fullwidthPunctMap = {
-                "!": "！", ",": "，", ".": "。", ":": "：", ";": "；",
+                "!": "！", ",": "，", ":": "：", ";": "；",
                 "?": "？", "(": "（", ")": "）", "[": "［", "]": "］",
                 "{": "｛", "}": "｝", "<": "＜", ">": "＞", '"': "＂", "'": "＇"
             };
@@ -977,7 +977,14 @@
             
             const convertPunct = (s, to = "full") => {
                 const map = to === "full" ? fullwidthPunctMap : halfwidthPunctMap;
-                return s.replace(/[\!\,\.\:\;\?\(\)\[\]\{\}<>\"\'！，。：；？（）［］｛｝＜＞＂＇]/g, (c) => map[c] || c);
+                // 對於轉成全形的情況，需要特別處理小數點
+                if (to === "full") {
+                    // 使用更精確的正則表達式來避免轉換數字中的小數點
+                    return s.replace(/[\!\,\:\;\?\(\)\[\]\{\}<>\"\']/g, (c) => map[c] || c);
+                } else {
+                    // 轉成半形時正常處理所有標點
+                    return s.replace(/[\！，。：；？（）［］｛｝＜＞＂＇]/g, (c) => map[c] || c);
+                }
             };
 
             switch (parseInt(mode)) {
@@ -991,43 +998,72 @@
                     return text.replace(/([\u4e00-\u9fff0-9A-Za-z])\s+([，。！？：；、．！？：；（）［］｛｝＜＞＂＇「」])/g, "$1$2")
                               .replace(/([，。！？：；、．！？：；（）［］｛｝＜＞＂＇「」])\s+([\u4e00-\u9fff0-9A-Za-z])/g, "$1$2");
                 case 10:
-                    return text.replace(/([\u4e00-\u9fff])([A-Za-z0-9])/g, "$1 $2")
-                               .replace(/([A-Za-z0-9])([\u4e00-\u9fff])/g, "$1 $2");
+                    // 在中文與英文數字之間加空白，但要避免切割常見詞彙
+                    let result = text;
+                    
+                    // 先保護常見的不應該被分割的詞彙
+                    const protectedWords = [
+                        '現在', '將來', '過去', '未來', '今天', '明天', '昨天',
+                        '第一', '第二', '第三', '第四', '第五', '第六', '第七', '第八', '第九', '第十',
+                        '星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日',
+                        '禮拜一', '禮拜二', '禮拜三', '禮拜四', '禮拜五', '禮拜六', '禮拜日'
+                    ];
+                    
+                    // 使用臨時標記保護這些詞彙
+                    const tempMarkers = {};
+                    protectedWords.forEach((word, index) => {
+                        const marker = `__PROTECTED_${index}__`;
+                        tempMarkers[marker] = word;
+                        result = result.replace(new RegExp(word, 'g'), marker);
+                    });
+                    
+                    // 執行正常的中英文數字間距處理
+                    result = result.replace(/([\u4e00-\u9fff])([A-Za-z0-9])/g, "$1 $2")
+                                   .replace(/([A-Za-z0-9])([\u4e00-\u9fff])/g, "$1 $2");
+                    
+                    // 恢復被保護的詞彙
+                    Object.entries(tempMarkers).forEach(([marker, word]) => {
+                        result = result.replace(new RegExp(marker, 'g'), word);
+                    });
+                    
+                    return result;
                 case 11:
                     return text.replace(/\n/g, '')
                               .replace(/\s+/g, ' ')
                               .trim();
                 case 12:
-                    let result = text;
-                    let quoteStack = [];
-                    let newText = '';
-                    
-                    for (let i = 0; i < result.length; i++) {
-                        const char = result[i];
+                    {
+                        let result = text;
+                        let quoteStack = [];
+                        let newText = '';
                         
-                        if (/["""''＂＇]/.test(char)) {
-                            const prevChar = i > 0 ? result[i - 1] : '';
-                            const nextChar = i < result.length - 1 ? result[i + 1] : '';
+                        for (let i = 0; i < result.length; i++) {
+                            const char = result[i];
                             
-                            const isOpening = (
-                                (i === 0 || /[\s\(\[\{（［｛\n\r，。！？：；、]/.test(prevChar)) &&
-                                !/[\s]/.test(nextChar) &&
-                                nextChar !== ''
-                            );
-                            
-                            if (quoteStack.length === 0 || isOpening) {
-                                newText += '「';
-                                quoteStack.push('「');
+                            if (/["""''＂＇]/.test(char)) {
+                                const prevChar = i > 0 ? result[i - 1] : '';
+                                const nextChar = i < result.length - 1 ? result[i + 1] : '';
+                                
+                                const isOpening = (
+                                    (i === 0 || /[\s\(\[\{（［｛\n\r，。！？：；、]/.test(prevChar)) &&
+                                    !/[\s]/.test(nextChar) &&
+                                    nextChar !== ''
+                                );
+                                
+                                if (quoteStack.length === 0 || isOpening) {
+                                    newText += '「';
+                                    quoteStack.push('「');
+                                } else {
+                                    newText += '」';
+                                    quoteStack.pop();
+                                }
                             } else {
-                                newText += '」';
-                                quoteStack.pop();
+                                newText += char;
                             }
-                        } else {
-                            newText += char;
                         }
+                        
+                        return newText;
                     }
-                    
-                    return newText;
                 case 13:
                     return text.replace(/\s/g, '　');
                 case 14:
